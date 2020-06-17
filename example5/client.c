@@ -19,6 +19,8 @@ int main(int argc, char const *argv[])
 #if !GLIB_CHECK_VERSION(2,35,0) 
     g_type_init(); 
 #endif 
+    gint out_response;
+    
     conn = g_bus_get_sync(G_BUS_TYPE_SESSION,NULL,&connerror); 
     if(connerror != NULL) 
     { 
@@ -33,9 +35,11 @@ int main(int argc, char const *argv[])
         g_error_free(proxyerror); 
         return 0; 
     } 
+
     //注册signal处理函数 
     g_signal_connect(proxy,"test-status",G_CALLBACK(test_status_handler),NULL); 
     GError *callError = NULL; 
+
     //调用server方法 
     hello_test_call_set_version_sync(proxy,"v1.0",NULL,&callError); 
     if(callError == NULL) { 
@@ -43,6 +47,16 @@ int main(int argc, char const *argv[])
     }else { 
         printf("call_set_version_sync error, %s\n",callError->message); 
     } 
+   
+    //sync方法是測試用，正常使用不會用sync，這樣會阻塞
+    hello_test_call_browser_ready_sync(proxy,"ready", &out_response, NULL,&callError); 
+    if(callError == NULL) { 
+        printf("call_set_version_sync success\n"); 
+        printf("out_response %d\n",out_response); 
+    }else { 
+        printf("call_set_version_sync error, %s\n",callError->message); 
+    } 
+   
     loop = g_main_loop_new(NULL, FALSE); 
     g_main_loop_run(loop); 
     g_object_unref(proxy); 

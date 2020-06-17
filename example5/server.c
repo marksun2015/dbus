@@ -10,10 +10,25 @@ static gboolean on_handle_set_version(
         const gchar *str,
         gpointer user_data) 
 { 
-    printf("Method call: %s\n", str); 
+    printf("on_handle_set_version: %s\n", str); 
     hello_test_complete_set_version (skeleton,invocation); 
     return TRUE; 
 } 
+
+static gboolean on_handle_browser_ready(
+        helloTest* skeleton,  
+        GDBusMethodInvocation *invocation,
+        const gchar *greeting,
+        gpointer user_data) 
+{ 
+    printf("on_handle_browser_ready \n"); 
+    if (g_strcmp0 (greeting, "ready") == 0)
+    {
+        hello_test_complete_browser_ready (skeleton,invocation,3); 
+    }
+    return TRUE; 
+} 
+
 
 /**
  * 连接上bus daemon的回调
@@ -27,6 +42,7 @@ void on_bus_acquired (GDBusConnection *connection,
     skeleton = hello_test_skeleton_new(); 
     //注意方法名，需参照Hello.c里面生成的字符串 
     g_signal_connect(skeleton,"handle-set-version",G_CALLBACK(on_handle_set_version),NULL); 
+    g_signal_connect(skeleton,"handle-browser-ready",G_CALLBACK(on_handle_browser_ready),NULL); 
 
     //发布服务到总线 
     g_dbus_interface_skeleton_export(G_DBUS_INTERFACE_SKELETON(skeleton), connection, "/com/yft/hello", &error); 
@@ -69,6 +85,7 @@ static gboolean emit_test_status_signal(gconstpointer p)
         hello_test_emit_test_status(skeleton,status_value); 
     } 
     status_value++; 
+    return 1;
 } 
 
 int main(int argc, char const *argv[]) 
@@ -77,10 +94,14 @@ int main(int argc, char const *argv[])
 #if !GLIB_CHECK_VERSION(2,35,0) 
     g_type_init(); 
 #endif 
-    owner_id = g_bus_own_name(  G_BUS_TYPE_SESSION,"com.yft.hello", 
+    owner_id = g_bus_own_name(  
+            G_BUS_TYPE_SESSION,
+            "com.yft.hello", 
             G_BUS_NAME_OWNER_FLAGS_NONE, 
-            on_bus_acquired,on_bus_name_acquired,
-            on_bus_name_lost,NULL,NULL); 
+            on_bus_acquired,
+            on_bus_name_acquired,
+            on_bus_name_lost,
+            NULL,NULL); 
     //测试，每3s发一次signal 
     g_timeout_add(3000,(GSourceFunc)emit_test_status_signal,NULL); 
 

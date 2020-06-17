@@ -8,6 +8,14 @@
         <signal name="testStatus"> 
             <arg name="status" type="i" /> 
         </signal> 
+        <signal name="testHihi"> 
+            <arg name="hihi" type="s" /> 
+        </signal>
+
+        <method name="browserReady">
+            <arg type="s" name="greeting" direction="in"/>
+            <arg type="i" name="response" direction="out"/>
+        </method>   
     </interface> 
 </node> 
 
