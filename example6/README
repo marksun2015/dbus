@@ -1,1 +1,15 @@
-dbus-send --session --print-reply --reply-timeout=2000 --type=method_call --dest=com.brion.test / com.brion.interface.setName string:bbb 
+## after build
+    $ dbus-server &
+    $ dbus-client
+
+## new file 
+    /usr/share/dbus-1/services/com.brion.test.service 
+    [D-BUS Service]
+    Name=com.brion.test
+    Exec=/home/dbus-server
+
+    這樣client 送出後, 可以trigger server執行檔  
+
+## test command
+    $ dbus-send --session --print-reply --reply-timeout=2000 --type=method_call --dest=com.brion.test / com.brion.interface.setName string:bbb 
+
