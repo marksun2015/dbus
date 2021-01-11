@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QDBusInterface interface("com.brion.service", "/", 
+    QDBusInterface interface("com.brion.test", "/",
             "com.brion.interface");
     interface.call("setName", "Brion");
     QDBusReply<QString> reply = interface.call("name");

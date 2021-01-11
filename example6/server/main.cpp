@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     Person *person = new Person();  
 
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
-    if (sessionBus.registerService("com.brion.service")) {
+    if (sessionBus.registerService("com.brion.test")) {
         sessionBus.registerObject("/",  person,
                 //QDBusConnection::ExportAllContents);
             QDBusConnection::ExportNonScriptableSlots);

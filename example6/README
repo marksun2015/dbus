@@ -1,0 +1,1 @@
+dbus-send --session --print-reply --reply-timeout=2000 --type=method_call --dest=com.brion.test / com.brion.interface.setName string:bbb 
